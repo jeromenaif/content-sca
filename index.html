@@ -148,13 +148,16 @@
             color: #E61F13;
         }
         .comments-intro {
-            background: rgba(255,193,7,0.15);
-            border-left: 4px solid #FFC107;
+            background: rgba(46,213,115,0.15);
+            border-left: 4px solid #2ed573;
             padding: 12px 16px;
             border-radius: 8px;
             margin-bottom: 20px;
             font-size: 13px;
             opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         .feedback-guide {
             background: rgba(13,202,240,0.1);
@@ -177,6 +180,25 @@
         .feedback-guide li {
             padding: 4px 0;
             opacity: 0.9;
+        }
+        .tally-iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 12px;
+            background: white;
+        }
+        .setup-notice {
+            background: rgba(255,193,7,0.15);
+            border-left: 4px solid #FFC107;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        .setup-notice strong {
+            color: #FFC107;
         }
         
         /* Visual Templates */
@@ -545,55 +567,59 @@
                     <h3>💬 Commentaires et Feedback</h3>
                     
                     <div class="feedback-guide">
-                        <h4>📝 Guide pour les commentaires</h4>
+                        <h4>📝 Comment laisser un feedback ?</h4>
                         <ul>
-                            <li>✅ <strong>Validation</strong> : "OK pour moi", "Go!", "Validé"</li>
-                            <li>🎨 <strong>Modifications visuelles</strong> : Couleurs, tailles, positionnement</li>
-                            <li>✍️ <strong>Modifications texte</strong> : Reformulations, corrections, typos</li>
-                            <li>❓ <strong>Questions</strong> : Demandes de clarifications</li>
-                            <li>💡 <strong>Idées</strong> : Suggestions alternatives</li>
+                            <li>✅ <strong>Validation</strong> : Cochez "Validé" si le post est OK</li>
+                            <li>🎨 <strong>Modifications visuelles</strong> : Décrivez les changements souhaités</li>
+                            <li>✍️ <strong>Corrections texte</strong> : Signalez les typos ou reformulations</li>
+                            <li>💡 <strong>Suggestions</strong> : Proposez des idées alternatives</li>
                         </ul>
                     </div>
                     
                     <div class="comments-intro">
-                        <strong>📢 Info :</strong> Authentification GitHub requise. Vous recevrez des notifications email pour les réponses.
+                        <span>✨</span>
+                        <div><strong>Aucun compte requis !</strong> Remplissez simplement le formulaire ci-dessous.</div>
                     </div>
                     
-                    <div id="giscus-container"></div>
+                    <div id="tally-container"></div>
                 </div>
             `;
             
-            // Charger dynamiquement giscus pour le post actuel
-            loadGiscusComments(p.id);
+            // Charger le formulaire Tally pour le post actuel
+            loadTallyForm(p.id);
         }
         
-        function loadGiscusComments(postId) {
-            const container = document.getElementById('giscus-container');
+        function loadTallyForm(postId) {
+            const container = document.getElementById('tally-container');
             if (!container) return;
             
-            // Supprimer l'ancien widget giscus s'il existe
-            container.innerHTML = '';
+            // URL de votre formulaire Tally (À CONFIGURER)
+            const tallyFormId = 'VOTRE_FORM_ID'; // ⚠️ À REMPLACER après création sur Tally.so
             
-            // Créer le script giscus
-            const script = document.createElement('script');
-            script.src = 'https://giscus.app/client.js';
-            script.setAttribute('data-repo', 'jeromenaif/content-sca');
-            script.setAttribute('data-repo-id', 'R_kgDORJ9zXA');
-            script.setAttribute('data-category', 'Publications');
-            script.setAttribute('data-category-id', 'DIC_kwDORJ9zXM4C19YQ');
-            script.setAttribute('data-mapping', 'specific');
-            script.setAttribute('data-term', `Publication-${postId}-Mars-2026`);
-            script.setAttribute('data-strict', '0');
-            script.setAttribute('data-reactions-enabled', '1');
-            script.setAttribute('data-emit-metadata', '0');
-            script.setAttribute('data-input-position', 'top');
-            script.setAttribute('data-theme', 'dark');
-            script.setAttribute('data-lang', 'fr');
-            script.setAttribute('data-loading', 'lazy');
-            script.setAttribute('crossorigin', 'anonymous');
-            script.async = true;
+            // Si le formulaire n'est pas encore configuré, afficher un message
+            if (tallyFormId === 'VOTRE_FORM_ID') {
+                container.innerHTML = `
+                    <div class="setup-notice">
+                        <strong>⚙️ Configuration requise</strong><br>
+                        Pour activer les commentaires, suivez le guide TALLY_SETUP.md pour créer votre formulaire Tally.so
+                        et remplacer "VOTRE_FORM_ID" dans ce fichier.
+                    </div>
+                `;
+                return;
+            }
             
-            container.appendChild(script);
+            // Créer l'iframe Tally avec le numéro de post pré-rempli
+            container.innerHTML = `
+                <iframe 
+                    src="https://tally.so/embed/${tallyFormId}?transparentBackground=1&hideTitle=1&dynamicHeight=1&post=${postId}"
+                    class="tally-iframe"
+                    frameborder="0"
+                    marginheight="0"
+                    marginwidth="0"
+                    title="Feedback Publication ${postId}"
+                    loading="lazy">
+                </iframe>
+            `;
         }
         
         function selectPost(i) {
